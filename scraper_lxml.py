@@ -13,7 +13,7 @@ def get_mwb_html(word):
     return html
 
 
-def get_note_default(word):
+def get_note_default(word, my_note):
     html = get_mwb_html(word)
     doc = lxml.html.fromstring(html.content)
     
@@ -52,7 +52,8 @@ def get_note_default(word):
     notefields = {'Dutch': dutch,
                   'Misc': misc,
                   'Explanations': explanations,
-                  'Examples': examples}
+                  'Examples': examples,
+                  'My note': my_note}
     return notefields
 
 
