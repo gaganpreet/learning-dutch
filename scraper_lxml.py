@@ -53,11 +53,11 @@ def get_note_default(word, my_note):
                   'Misc': misc,
                   'Explanations': explanations,
                   'Examples': examples,
-                  'My note': my_note}
+                  'My_note': my_note}
     return notefields
 
 
-def get_note_simple(word):
+def get_note_simple(word, my_note):
     html = get_mwb_html(word)
     doc = lxml.html.fromstring(html.content)
 
@@ -68,5 +68,6 @@ def get_note_simple(word):
     explanations = doc.xpath('//table[@border=0]/tr[1]/td[2]')[0].text_content()
 
     notefields = {'Dutch': dutch,
-                  'Explanations': explanations}
+                  'Explanations': explanations,
+                  'My_note': my_note}
     return notefields
