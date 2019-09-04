@@ -1,20 +1,24 @@
 import re
-from mwb_help import deck_is_available, create_deck,\
-    model_is_available, add_model, add_note
+from mwb_help import (
+    deck_is_available,
+    create_deck,
+    model_is_available,
+    add_model,
+    add_note,
+)
 from scraper_lxml import get_note_default, get_note_simple
 
 
-class AnkiDutchDeck():
-
+class AnkiDutchDeck:
     def __init__(self, deck_name=None):
         if deck_name is None:
-            deck_name = 'tidbits'
+            deck_name = "tidbits"
         if not deck_is_available(deck_name):
             create_deck(deck_name)
         self.deck_name = deck_name
 
-        self.default_model_name = 'dutch_default'
-        self.simple_model_name = 'dutch_simple'
+        self.default_model_name = "dutch_default"
+        self.simple_model_name = "dutch_simple"
 
         if not model_is_available(self.default_model_name):
             self.add_model_default()
@@ -22,23 +26,31 @@ class AnkiDutchDeck():
             self.add_model_simple()
 
     def add_model_default(self):
-        model_name = 'dutch_default'
-        note_fields = ['Dutch', 'Misc', 'Explanations', 'Examples']
-        card_templates = [{'Front': '{{Dutch}}',
-                           'Back' : ('{{Misc}}'
-                            '<hr><hr><b>Explanations</b><br />{{Explanations}}'
-                            '<hr><hr><b>Examples</b><br />{{Examples}}'
-                            '<hr><hr><b>My notes</b><br />{{My note}}'
-                            )}]
+        model_name = "dutch_default"
+        note_fields = ["Dutch", "Misc", "Explanations", "Examples", "My_note"]
+        card_templates = [
+            {
+                "Front": "{{Dutch}}",
+                "Back": (
+                    "{{Misc}}"
+                    "<hr><hr><b>Explanations</b><br />{{Explanations}}"
+                    "<hr><hr><b>Examples</b><br />{{Examples}}"
+                    "<hr><hr><b>My notes</b><br />{{My_note}}"
+                ),
+            }
+        ]
         add_model(model_name, note_fields, card_templates)
 
     def add_model_simple(self):
-        model_name = 'dutch_simple'
-        note_fields = ['Dutch', 'Explanations']
-        card_templates = [{'Front': '{{Dutch}}',
-                           'Back' : '{{Explanations}}'},
-                          {'Front': '{{Explanations}}',
-                           'Back' : '{{Dutch}}'}]
+        model_name = "dutch_simple"
+        note_fields = ["Dutch", "Explanations", "My_note"]
+        card_templates = [
+            {
+                "Front": "{{Dutch}}",
+                "Back": "{{Explanations}}"
+                "<hr><hr><b>My notes</b><br />{{My_note}}",
+            }
+        ]
         add_model(model_name, note_fields, card_templates)
 
     def add_note_default(self, note_fields):
@@ -54,13 +66,13 @@ class AnkiDutchDeck():
             if note_fields is None:
                 print(f'"{word}" not found in mijnwoordenbook')
                 if output_file:
-                    with open(output_file, 'a') as f:
-                        f.write('\n')
+                    with open(output_file, "a") as f:
+                        f.write("\n")
                         f.write(word)
                 return
         except:
             is_default_model = False
-            note_fields = get_note_simple(word)
+            note_fields = get_note_simple(word, my_note)
 
         try:
             if is_default_model:
@@ -72,28 +84,29 @@ class AnkiDutchDeck():
 
     def add_note_from_list(self, word_list, output_file=None):
         for word, my_note in word_list:
-            word = re.sub('^\(?(het|de)\)? ', '', word)
-            word = re.sub('\([^ ]*\)', '', word)
+            word = re.sub("^\(?(het|de)\)? ", "", word)
+            word = re.sub("\([^ ]*\)", "", word)
             word = word.strip()
 
             self.add_note_from_word(word, my_note, output_file)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description='file containing word list')
-    parser.add_argument('-f', '--file',
-                        help='select file containing word list')
-    parser.add_argument('-l', '--list',
-                        help='input word list, separated by comma')
-    parser.add_argument('-o', '--output',
-                        help='output unfound words to file')
+    parser = argparse.ArgumentParser(description="file containing word list")
+    parser.add_argument(
+        "-f", "--file", help="select file containing word list"
+    )
+    parser.add_argument(
+        "-l", "--list", help="input word list, separated by comma"
+    )
+    parser.add_argument("-o", "--output", help="output unfound words to file")
     args = parser.parse_args()
 
     word_list = []
     if args.file is not None:
-        words = map(lambda s: s.split(';'), open(args.file).readlines()[:25])
+        words = map(lambda s: s.split(";"), open(args.file).readlines()[:25])
         word_list.extend(words)
 
     # word_list = ['hhhsss', 'duits', 'alsjeblieft', 'waterpokken']
